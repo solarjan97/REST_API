@@ -4,10 +4,9 @@ import express, { json, urlencoded } from 'express';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
-import router from "./routes/index.js";
+import router from "./index.js";
 
 const app = express();
-const port = 3000;
 
 app.use(logger('dev'));
 app.use(json());
