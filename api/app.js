@@ -31,4 +31,15 @@ app.use(function(err, req, res, next) {
   res.json({error: err});
 });
 
+const port = process.env.PORT || 8080
+
+app.listen(port, (err, res) => {
+	if (err) {
+		console.log(err)
+		return res.status(500).send(err.message)
+	} else {
+		console.log('[INFO] Server Running on port:', port)
+	}
+})
+
 export default app;
