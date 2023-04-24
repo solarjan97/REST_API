@@ -20,8 +20,9 @@ router.get('/', async function(req, res) {
             res.json(evalExpr(value));
             break;
         default:
-            console.log('Invalid query');
-            res.status(404);
+            res.json('response:','indexPage');
+            // console.log('Invalid query');
+            // res.status(404);
             break;
     }
 });
