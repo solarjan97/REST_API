@@ -1,30 +1,45 @@
 'use strict'
-import { Router } from 'express';
-import airportTemp from './airportTemp.js';
-import stockPrice from './stockPrice.js';
-import evalExpr from './evalExpression.js';
+import createError from 'http-errors';
+import express, { json, urlencoded } from 'express';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 
-const router = Router();
-router.get('/', async function(req, res) {
-    const query = req.url.split('?')[1];
-    const key = query.split('=')[0];
-    const value = query.split('=')[1];
-    switch(key) {
-        case 'queryAirportTemp':
-            res.json(await airportTemp(value));
-            break;
-        case 'queryStockPrice':
-            res.json(await stockPrice(value));
-            break;
-        case 'queryEval':
-            res.json(evalExpr(value));
-            break;
-        default:
-            res.json('response:','indexPage');
-            // console.log('Invalid query');
-            // res.status(404);
-            break;
-    }
+import router from "./service.js";
+
+const app = express();
+
+app.use(logger('dev'));
+app.use(json());
+app.use(urlencoded({ extended: false }));
+app.use(cookieParser());
+
+app.use('/', router);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
-    
-export default router;
+
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.json({error: err});
+});
+
+const port = process.env.PORT || 8080
+
+app.listen(port, (err, res) => {
+	if (err) {
+		console.log(err)
+		return res.status(500).send(err.message)
+	} else {
+		console.log('[INFO] Server Running on port:', port)
+	}
+})
+
+export default app;
